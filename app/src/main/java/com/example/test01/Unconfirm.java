@@ -1,7 +1,6 @@
 package com.example.test01;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -11,11 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
 import com.example.test01.Common.Common;
 import com.example.test01.Interface.ItemClickListener;
-import com.example.test01.Model.OrderFood;
 import com.example.test01.Model.Request;
 import com.example.test01.ViewHolder.OrderViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -26,13 +23,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class Unconfirm extends AppCompatActivity {
 
     public RecyclerView recyclerView;
     public RecyclerView.LayoutManager layoutManager;
     FirebaseDatabase database;
     DatabaseReference requests;
-
+    DatabaseReference unconfirm;
+    ArrayList<Request> list;
     AppCompatSpinner spinner;
     FirebaseRecyclerAdapter<Request, OrderViewHolder> adapter;
     @Override
@@ -43,21 +43,41 @@ public class Unconfirm extends AppCompatActivity {
         FirebaseApp.initializeApp(Unconfirm.this);
         database = FirebaseDatabase.getInstance();
         requests = database.getReference("Request");
-
+        unconfirm = database.getReference("Unconfirm");
         recyclerView = (RecyclerView)findViewById(R.id.listOrders);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        unconfirm.removeValue();
+        requests.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds : dataSnapshot.getChildren())
+                {
+                    String status = ds.child("status").getValue(String.class);
+                    if(status.equals("0"))
+                    {
+                        String key = ds.getKey();
+                        Request temp = ds.getValue(Request.class);
+                        unconfirm.child(key).setValue(temp);
+                    }
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         loadOrder();
     }
 
     private void loadOrder() {
-        adapter = new FirebaseRecyclerAdapter<Request, OrderViewHolder>(
+       adapter = new FirebaseRecyclerAdapter<Request, OrderViewHolder>(
                 Request.class,
                 R.layout.order_layout,
                 OrderViewHolder.class,
-                requests
+                unconfirm
         ) {
             @Override
             protected void populateViewHolder(OrderViewHolder viewHolder, Request model, int position) {
@@ -117,7 +137,7 @@ public class Unconfirm extends AppCompatActivity {
         final DatabaseReference request;
         request = database.getReference("confirm");
         request.child(localkey).setValue(item);
-        requests.addValueEventListener(new ValueEventListener() {
+       /* requests.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -132,8 +152,8 @@ public class Unconfirm extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
-       // requests.child(localkey).removeValue();
+        });*/
+        unconfirm.child(localkey).removeValue();
     }
 
     private void deleteOrder(String key) {

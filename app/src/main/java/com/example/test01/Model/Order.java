@@ -2,8 +2,8 @@ package com.example.test01.Model;
 
 public class Order {
 
-    private String foodId;
-    private String foodName;
+    private String productId;
+    private String productName;
     private String quantity;
     private String price;
     private String description;
@@ -12,27 +12,27 @@ public class Order {
     }
 
     public Order(String foodId, String foodName, String quantity, String price, String description) {
-        this.foodId = foodId;
-        this.foodName = foodName;
+        this.productId = foodId;
+        this.productName = foodName;
         this.quantity = quantity;
         this.price = price;
         this.description = description;
     }
 
-    public String getFoodId() {
-        return foodId;
+    public String getProductId() {
+        return productId;
     }
 
-    public void setFoodId(String foodId) {
-        this.foodId = foodId;
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
-    public String getFoodName() {
-        return foodName;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setFoodName(String foodName) {
-        this.foodName = foodName;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public String getQuantity() {

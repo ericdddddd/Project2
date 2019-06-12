@@ -74,7 +74,7 @@ public class OrderFoodList extends AppCompatActivity {
                 OrderFood.class,
                 R.layout.foodorder_layout,
                 OrderFoodViewHolder.class,
-                confirm.child(key).child("food")
+                confirm.child(key).child("foods")
         ) {
             @Override
             protected void populateViewHolder(OrderFoodViewHolder viewHolder, OrderFood model, int position) {
